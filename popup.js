@@ -93,6 +93,22 @@ async function refresh() {
   render(res.site);
 }
 
+// chrome.tabs.update(tabId, {url}) to the tab's OWN current URL is not
+// guaranteed to force a fresh navigation in Chrome — if the tab is already
+// sitting on the real site (the common case for "Block current site"),
+// navigating to the identical URL can be a no-op, leaving the old page
+// visible even though the new redirect rule is live. tabs.reload()
+// explicitly forces a real reload, so use that unless we actually need to
+// navigate away from the stump page to a different URL.
+function forceRevisit(tab, targetUrl) {
+  if (!tab?.id) return;
+  if (tab.url === targetUrl) {
+    chrome.tabs.reload(tab.id, { bypassCache: true });
+  } else {
+    chrome.tabs.update(tab.id, { url: targetUrl });
+  }
+}
+
 blockBtn.addEventListener('click', async () => {
   const res = await chrome.runtime.sendMessage({ action: 'block', url: currentUrl });
   if (!res?.ok) {
@@ -100,9 +116,7 @@ blockBtn.addEventListener('click', async () => {
     return;
   }
   const tab = await getActiveTab();
-  // Navigate (not reload) so a tab currently on the stump page also
-  // re-resolves against the freshly updated redirect rule.
-  if (tab?.id) chrome.tabs.update(tab.id, { url: currentUrl });
+  forceRevisit(tab, currentUrl);
   window.close();
 });
 
@@ -113,7 +127,7 @@ unblockBtn.addEventListener('click', async () => {
     return;
   }
   const tab = await getActiveTab();
-  if (tab?.id) chrome.tabs.update(tab.id, { url: currentUrl });
+  forceRevisit(tab, currentUrl);
   window.close();
 });
 
