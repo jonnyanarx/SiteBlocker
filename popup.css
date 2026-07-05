@@ -1,0 +1,56 @@
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  background: #1e1f22;
+  color: #eee;
+}
+
+.popup {
+  width: 240px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.domain {
+  font-size: 13px;
+  font-weight: 600;
+  word-break: break-all;
+  opacity: 0.8;
+}
+
+.status {
+  font-size: 13px;
+  min-height: 18px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #3a3d42;
+  color: #fff;
+}
+
+button:hover {
+  background: #4a4d52;
+}
+
+#blockBtn {
+  background: #b3392f;
+}
+
+#blockBtn:hover {
+  background: #cc4438;
+}
+
+#unblockBtn {
+  background: #2f7a3e;
+}
+
+#unblockBtn:hover {
+  background: #388f49;
+}

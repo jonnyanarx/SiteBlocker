@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "GoDoSomethingUseful",
+  "version": "1.0.0",
+  "description": "Block distracting sites with one click; unblocking takes a 5-minute cooldown.",
+  "permissions": ["storage", "declarativeNetRequest", "alarms", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "pill.png",
+    "48": "pill.png",
+    "128": "pill.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GoDoSomethingUseful",
+    "default_icon": {
+      "16": "pill.png",
+      "48": "pill.png",
+      "128": "pill.png"
+    }
+  }
+}

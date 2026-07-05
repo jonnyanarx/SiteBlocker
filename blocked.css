@@ -1,0 +1,44 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e1f22;
+  color: #eee;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+.stump {
+  text-align: center;
+  padding: 24px;
+}
+
+#message {
+  font-size: 28px;
+  font-weight: 600;
+  max-width: 600px;
+}
+
+#unblockNowBtn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  background: #2f7a3e;
+  color: #fff;
+}
+
+#unblockNowBtn:hover {
+  background: #388f49;
+}
+
+#unblockNowBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
