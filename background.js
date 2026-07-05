@@ -68,17 +68,20 @@ async function saveState(state) {
   await chrome.storage.local.set(state);
 }
 
+function blockedPageUrl(domain) {
+  return chrome.runtime.getURL(`blocked.html?${new URLSearchParams({ domain })}`);
+}
+
 function buildRule(id, domain) {
   // blocked.html polls the background for live status/timing itself, so the
   // redirect target only needs to identify the domain — it doesn't need to
   // change across 'blocked' / 'pending' / 'confirm'.
-  const params = new URLSearchParams({ domain });
   return {
     id,
     priority: 1,
     action: {
       type: 'redirect',
-      redirect: { url: chrome.runtime.getURL(`blocked.html?${params.toString()}`) }
+      redirect: { url: blockedPageUrl(domain) }
     },
     condition: {
       urlFilter: `||${domain}^`,
@@ -185,6 +188,33 @@ async function expireConfirmWindow(domain) {
   clearTimers(domain);
   console.log('Site Blocker: confirm window missed for', domain, '- reblocked');
 }
+
+// Backstop for navigations that never go through declarativeNetRequest at
+// all — notably Chrome's page preloading/prerendering, which can render a
+// page in a hidden background tab (e.g. from address-bar autocomplete) and
+// then just activate it, with no fresh network request for our redirect
+// rule to catch. onCommitted fires for the real, visible top-level
+// navigation regardless of how it got there, so re-check it here and force
+// the redirect ourselves if DNR missed it.
+chrome.webNavigation.onCommitted.addListener(async (details) => {
+  if (details.frameId !== 0) return; // top-level frame only
+
+  let domain;
+  try {
+    domain = getRegistrableDomain(new URL(details.url).hostname);
+  } catch {
+    return; // not an http(s) URL (e.g. chrome:// pages)
+  }
+
+  const { sites } = await getState();
+  const site = sites[domain];
+  if (!site) return;
+
+  if (details.url !== blockedPageUrl(domain)) {
+    console.log('Site Blocker: webNavigation backstop caught a DNR miss for', domain);
+    chrome.tabs.update(details.tabId, { url: blockedPageUrl(domain) });
+  }
+});
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   try {
