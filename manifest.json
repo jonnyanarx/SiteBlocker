@@ -3,7 +3,7 @@
   "name": "GoDoSomethingUseful",
   "version": "1.0.0",
   "description": "Block distracting sites with one click; unblocking takes a 5-minute cooldown.",
-  "permissions": ["storage", "declarativeNetRequest", "alarms", "activeTab"],
+  "permissions": ["storage", "declarativeNetRequest", "alarms", "activeTab", "webNavigation"],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
