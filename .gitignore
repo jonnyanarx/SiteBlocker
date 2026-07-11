@@ -1,1 +1,6 @@
 .claude/settings.local.json
+
+# Private key used to sign .crx updates — must stay secret. Anyone with
+# this file can sign a package Chrome will treat as an update to this same
+# extension ID, so it must never end up in the (public) repo.
+*.pem
